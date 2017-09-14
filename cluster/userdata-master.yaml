@@ -13,8 +13,6 @@ ssh_authorized_keys:
   - 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCqAikaHsZWMuJvKZphZPZG0fnKMvVCRfBAbIS6e0Y+YqM0PfsWgB5e4f5TrbisQHdKopbfZVwYIaV/NegEuinrYPKC7t2ese/HjxgjHR95zHOcDP19Cbo+xeyH8zbRd9K3iRSyCUSMNRw5NL6zN8JOSl12m8QWQA4hTjFTmt870fIT4RLxu9qGlbQipUm57E/SotsNC41MQ/PsLQzOAviKrkS1rei2vzRHzAcjz1Z7GT5oH+dFVUC66kKa0XWDvq+VtkRVoLvS2chrIPCgESeeZAyOKyiOoyJxFFFiMVK48MWDBBIYTIsHE0qs/RwBi9+8lQGiHK5Rpk2djcloO0c7 sandor.szuecs@zalando.de'
   - 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCa6Sj76tQ/nyCbkAd5zL/ZPhH+4lfuBT7fFXfamRnIiA3LVXp5/0R8vhvXOYL5Q6uclr5n8sJD1IcwpYTkQrV+u7+PKnbBJZjYDgsbcDr843jzDHhJOzWiKpB5fFcu4Ll5pYVyXq3CgsTuNKBUCnQJEtx7WLRBAFoHZuicp9IjfXfyEVclcKvlGfWBFnidaSCrv2MKKCfqYwif8bY1PSnDYaqsqCrptZkzvuFlcewtsp2t12W760LiZlAB8RRM9SE5DdTYqyeLB2NymI0JecFM+yW/p3bRp6NZt63w9N/IqjQw5aJwAJfEzrb2dVKlr9y7TXyKZPfElvzPEsujTZBOTZs4uRfTMdPsAJj8qB/hNvdIfaFLn9KNQvzhwOjk8zjYU5NhZMUu5T8VBby8tcg9DLFfIqLJxoD1E1UHkOXCIuA3jhF6zre2d6cUeLmatsuOmd2OYeAcy9s3GOOjn/zCpIZ9k5eDLaWKwBgNFnNVznWdOgpd5BaY5PE1wS6655/po7hEngE3KWaNcmHV7AuQteozWYNNbIZy78UZ2p9LDm7v78BP5UNy834kSOu8MUQN2hNJ9hZ4x0MI2F6nmDKxqxAfkH9LBQ3Mf6FfJsV0+GSrLnI0mvmBcZp9/LOwcBAjf9MyHN3IcFbTxiQATaj7rXnYoBi88g9l4lQObiBNXQ== yerken.tussupbekov@zalando.de'
 coreos:
-  update:
-    reboot-strategy: "off"
   flannel:
     interface: $private_ipv4
     etcd_endpoints: http://127.0.0.1:2379
@@ -123,8 +121,9 @@ coreos:
         --rkt-path=/usr/bin/rkt \
         --register-schedulable=false \
         --allow-privileged \
-        --node-labels=master=true \
+        --node-labels=node-role.kubernetes.io/master,node.alpha.kubernetes.io/role=master \
         --node-labels={{NODE_LABELS}} \
+        --register-with-taints=node.alpha.kubernetes.io/role=master:NoSchedule \
         --pod-manifest-path=/etc/kubernetes/manifests \
         --cluster_dns=10.3.0.10 \
         --cluster_domain=cluster.local \
@@ -172,6 +171,9 @@ coreos:
 
         [Install]
         WantedBy=multi-user.target
+
+    - name: locksmithd.service
+      mask: true
 
 write_files:
 

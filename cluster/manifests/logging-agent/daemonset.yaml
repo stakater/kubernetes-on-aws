@@ -26,6 +26,10 @@ spec:
       tolerations:
       - key: CriticalAddonsOnly
         operator: Exists
+      - key: node.alpha.kubernetes.io/role
+        operator: Equal
+        value: master
+        effect: NoSchedule
       initContainers:
       - name: init-scalyr-config
         image: registry.opensource.zalan.do/stups/alpine:3.5-cd10

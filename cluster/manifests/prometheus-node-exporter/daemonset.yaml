@@ -26,6 +26,10 @@ spec:
       tolerations:
       - key: CriticalAddonsOnly
         operator: Exists
+      - key: node.alpha.kubernetes.io/role
+        operator: Equal
+        value: master
+        effect: NoSchedule
       containers:
       - image: registry.opensource.zalan.do/teapot/prometheus-node-exporter:v0.14.0
         name: prometheus-node-exporter

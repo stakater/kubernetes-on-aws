@@ -22,6 +22,10 @@ spec:
       tolerations:
       - key: CriticalAddonsOnly
         operator: Exists
+      - key: node.alpha.kubernetes.io/role
+        operator: Equal
+        value: master
+        effect: NoSchedule
       containers:
       - name: kube-node-ready
         image: registry.opensource.zalan.do/teapot/kube-node-ready:9799c3d
