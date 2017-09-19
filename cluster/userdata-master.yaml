@@ -179,7 +179,8 @@ coreos:
           drain $(hostname) \
           --ignore-daemonsets \
           --delete-local-data \
-          --force'
+          --force \
+          --timeout=10m'
 
         [Install]
         WantedBy=multi-user.target
