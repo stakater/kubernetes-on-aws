@@ -92,8 +92,8 @@ coreos:
       runtime: true
       content: |
         [Service]
-        Environment=KUBELET_IMAGE_TAG=v1.7.7_coreos.0
-        Environment=KUBELET_IMAGE_URL=docker://registry.opensource.zalan.do/teapot/hyperkube
+        Environment=KUBELET_IMAGE_TAG=v1.8.0
+        Environment=KUBELET_IMAGE_URL=docker://gcr.io/google_containers/hyperkube
         Environment="RKT_RUN_ARGS=--insecure-options=image \
         --uuid-file-save=/var/run/kubelet-pod.uuid \
         --volume dns,kind=host,source=/etc/resolv.conf \
@@ -128,7 +128,6 @@ coreos:
         --tls-cert-file=/etc/kubernetes/ssl/worker.pem \
         --tls-private-key-file=/etc/kubernetes/ssl/worker-key.pem \
         --cloud-provider=aws \
-        --low-diskspace-threshold-mb=1000 \
         --feature-gates=ExperimentalCriticalPodAnnotation=true,TaintBasedEvictions=true \
         --system-reserved=cpu=100m,memory=164Mi \
         --kube-reserved=cpu=100m,memory=282Mi
@@ -156,7 +155,7 @@ coreos:
           --volume=kube,kind=host,source=/etc/kubernetes,readOnly=true \
           --mount=volume=kube,target=/etc/kubernetes \
           --net=host \
-          docker://registry.opensource.zalan.do/teapot/hyperkube:v1.7.7_coreos.0 \
+          docker://gcr.io/google_containers/hyperkube:v1.8.0 \
           --exec=/kubectl -- \
             --kubeconfig=/etc/kubernetes/worker-kubeconfig.yaml \
             drain $(hostname) \
@@ -195,7 +194,7 @@ write_files:
           namespace: kube-system
           labels:
             application: kube-proxy
-            version: v1.7.7_coreos.0
+            version: v1.8.0
           annotations:
             scheduler.alpha.kubernetes.io/critical-pod: ''
             rkt.alpha.kubernetes.io/stage1-name-override: coreos.com/rkt/stage1-fly
@@ -206,7 +205,7 @@ write_files:
           hostNetwork: true
           containers:
           - name: kube-proxy
-            image: registry.opensource.zalan.do/teapot/hyperkube:v1.7.7_coreos.0
+            image: gcr.io/google_containers/hyperkube:v1.8.0
             command:
             - /hyperkube
             - proxy
